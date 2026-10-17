@@ -188,7 +188,7 @@ $('s1').onclick=()=>setSt('expedida');$('s2').onclick=()=>setSt('atribuido');
 function say(t,ok){const m=$('msg');m.className='msg';void m.offsetWidth;m.className='msg '+(ok?'ok':'er');m.innerHTML=t}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const stTxt=s=>s=='atribuido'?'Reatribuído':'Rota já expedida';
-const API='COLE_AQUI_A_URL_DO_APPS_SCRIPT';
+const API='https://script.google.com/macros/s/AKfycbxAiVryc_NsMmo09WtOi6sONk_rzeMB-S6wqYUei0jU4s73NV0JPtSlrU2MePJTTzmRoA/exec';
 const useApi=()=>/^https:\/\/script\.google\.com\//.test(API);
 let last='',inited=false;const seen=new Set();
 const isNew=id=>{const n=inited&&!seen.has(id);seen.add(id);return n?' new':''};
