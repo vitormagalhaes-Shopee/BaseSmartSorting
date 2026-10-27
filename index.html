@@ -52,7 +52,6 @@ input:focus,textarea:focus{outline:none;border-color:var(--o)}
 .list{max-height:360px;overflow:auto}
 .it{display:flex;justify-content:space-between;gap:8px;padding:10px 22px;border-top:1px solid var(--bd);font-size:13px;align-items:center}
 .it code{font-weight:700;word-break:break-all}.it small{color:var(--mu);display:block}
-.it button{border:0;background:none;color:#9ca3af;cursor:pointer;font-size:16px}
 .empty{padding:28px;text-align:center;color:var(--mu);font-size:13px}
 .vol{padding:12px 22px;border-top:1px solid var(--bd);display:flex;gap:10px;align-items:center;font-size:13px}
 .vol input{width:110px;padding:8px 10px;font-size:14px;border-radius:8px}
@@ -72,7 +71,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--o)}
 .charts .cb svg{width:100%;height:auto;display:block}
 .hide{display:none}
 
-/* ===== Visual + animações ===== */
+/* Visual + animations */
 body{background:radial-gradient(1200px 600px at 10% -10%,rgba(238,77,45,.35),transparent 60%),radial-gradient(900px 500px at 100% 100%,rgba(255,159,67,.18),transparent 60%),linear-gradient(135deg,#12171f,#1f2937 50%,#2a1d19) fixed}
 body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:repeating-linear-gradient(115deg,transparent 0 60px,rgba(255,255,255,.03) 60px 62px);animation:belt 14s linear infinite}
 @keyframes belt{to{background-position:124px 0}}
@@ -96,8 +95,6 @@ input[type=text]:focus,textarea:focus{box-shadow:0 0 0 4px rgba(238,77,45,.15)}
 @keyframes pop{from{opacity:0;transform:translateY(-8px) scale(.96)}}
 .it.new{animation:slide .5s cubic-bezier(.2,.9,.3,1)}
 @keyframes slide{from{opacity:0;transform:translateX(24px);background:#ffedd5}}
-.it.out{animation:out .25s forwards}
-@keyframes out{to{opacity:0;transform:translateX(-30px)}}
 .bump{display:inline-block;animation:bump .4s}
 @keyframes bump{40%{transform:scale(1.5);color:var(--o)}}
 .fx{animation:fade .4s ease}
@@ -108,8 +105,6 @@ input[type=text]:focus,textarea:focus{box-shadow:0 0 0 4px rgba(238,77,45,.15)}
 .charts.go .card{animation:up .55s backwards}.charts.go .card:nth-child(2){animation-delay:.08s}.charts.go .card:nth-child(3){animation-delay:.16s}.charts.go .card:nth-child(4){animation-delay:.24s}
 .go .bar{transform-box:fill-box;transform-origin:bottom;animation:grow .8s cubic-bezier(.2,.9,.3,1.2) backwards}
 @keyframes grow{from{transform:scaleY(0)}}
-.go .dn{animation:dnA 1s ease backwards}
-@keyframes dnA{from{stroke-dasharray:0 400}}
 @media(prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -160,19 +155,19 @@ input[type=text]:focus,textarea:focus{box-shadow:0 0 0 4px rgba(238,77,45,.15)}
 </main>
 <script>
 const R=[
- {k:'sorting',n:'Erro de sorting',e:'📦',c:'#fff3ee'},
- {k:'etiqueta',n:'Erro de etiquetagem',e:'🏷️',c:'#fff3ee'},
- {k:'veiculo',n:'Não coube no veículo',e:'🚚',c:'#fff3ee'},
- {k:'fora_rota',n:'Pacote retirado (fora de rota)',e:'↩️',c:'#f5f0ff'},
- {k:'comercial',n:'Pacote retirado (comercial)',e:'🏪',c:'#f5f0ff'},
- {k:'fleet',n:'Erro de realocação fleet',e:'🔄',c:'#eff6ff'},
- {k:'data',n:'Data errada',e:'📅',c:'#eff6ff'},
- {k:'avaria',n:'Possível avaria',e:'⚠️',c:'#fef2f2'}];
+ {k:'sorting',n:'Erro de sorting',e:'📦',c:'#fff3ee',color:'#ee4d2d'},
+ {k:'etiqueta',n:'Erro de etiquetagem',e:'🏷️',c:'#fff3ee',color:'#f4a28f'},
+ {k:'veiculo',n:'Não coube no veículo',e:'🚚',c:'#fff3ee',color:'#ff9f43'},
+ {k:'fora_rota',n:'Pacote retirado (fora de rota)',e:'↩️',c:'#f5f0ff',color:'#845ec2'},
+ {k:'comercial',n:'Pacote retirado (comercial)',e:'🏪',c:'#f5f0ff',color:'#d65db1'},
+ {k:'fleet',n:'Erro de realocação fleet',e:'🔄',c:'#eff6ff',color:'#4ff0b7'},
+ {k:'data',n:'Data errada',e:'📅',c:'#eff6ff',color:'#00c9a7'},
+ {k:'avaria',n:'Possível avaria',e:'⚠️',c:'#fef2f2',color:'#c44536'}];
 const $=s=>document.getElementById(s);
 const pad=n=>String(n).padStart(2,'0');
 const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const TODAY=()=>ymd(new Date());
-let recs=[],vols={},db=null,op='Operador',opId='local',mode=1,status='expedida',per='hoje',lcl=null;
+let recs=[],vols={},db=null,op='Operador',opId='local',mode=1,status='expedida',per='hoje';
 const LS='smartsorting_v1';
 function lsLoad(){try{const j=JSON.parse(localStorage.getItem(LS)||'{}');recs=j.recs||[];vols=j.vols||{}}catch(e){}}
 function lsSave(){try{localStorage.setItem(LS,JSON.stringify({recs,vols}))}catch(e){}}
@@ -226,14 +221,11 @@ $('idin').onkeydown=e=>{if(e.key=='Enter'){e.preventDefault();say('Agora toque n
 function render(){
   const t=TODAY(),L=recs.filter(x=>x.date==t).sort((a,b)=>b.ts-a.ts);
   {const c=$('cnt');if(c.textContent!=L.length){c.textContent=L.length;c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump')}}$('csv').disabled=!L.length;
-  $('list').innerHTML=L.length?L.map(x=>`<div class="it${isNew(x.id)}"><div><code>${esc(x.id_pkg)}</code><small>${R.find(r=>r.k==x.reason)?.n||x.reason} · ${stTxt(x.status)} · ${new Date(x.ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</small></div><button title="Excluir" data-d="${x.id}">✕</button></div>`).join(''):'<div class="empty">Nenhuma ocorrência registrada hoje.</div>';
+  // Deletion feature completely removed from HTML rendering
+  $('list').innerHTML=L.length?L.map(x=>`<div class="it${isNew(x.id)}"><div><code>${esc(x.id_pkg)}</code><small>${R.find(r=>r.k==x.reason)?.n||x.reason} · ${stTxt(x.status)} · ${new Date(x.ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</small></div></div>`).join(''):'<div class="empty">Nenhuma ocorrência registrada hoje.</div>';
   if(document.activeElement!==$('vol'))$('vol').value=vols[t]||'';
   if(!$('v2').classList.contains('hide'))dash();
 }
-$('list').onclick=async e=>{const b=e.target.closest('[data-d]');if(!b)return;const id=b.dataset.d;if(!confirm('Excluir este registro?'))return;
-  b.closest('.it').classList.add('out');await new Promise(r=>setTimeout(r,250));
-  const old=recs;recs=recs.filter(x=>x.id!=id);render();
-  if(useApi()){try{await api({action:'del',id});setSync(true)}catch(x){recs=old;render();setSync(false);say('Falha ao excluir.',false)}}else lsSave()};
 $('vol').onchange=async()=>{const v=+$('vol').value||0,t=TODAY();vols[t]=v;render();
   if(useApi()){try{await api({action:'vol',date:t,v});setSync(true)}catch(e){setSync(false);say('Falha ao salvar o volume.',false)}}else lsSave()};
 $('csv').onclick=()=>{
@@ -241,7 +233,8 @@ $('csv').onclick=()=>{
   const q=s=>'"'+String(s).replace(/"/g,'""')+'"';
   const data='\ufeffID;Motivo;Status;Hora;Operador\n'+L.map(x=>[x.id_pkg,R.find(r=>r.k==x.reason)?.n,stTxt(x.status),new Date(x.ts).toLocaleTimeString('pt-BR'),x.by].map(q).join(';')).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'text/csv;charset=utf-8'}));a.download='ocorrencias_'+t+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
-/* Dashboard */
+
+/* Dashboard & Analytics */
 function range(){
   const n=new Date(),d=x=>new Date(n.getFullYear(),n.getMonth(),n.getDate()+x),dow=(n.getDay()+6)%7;
   if(per=='hoje')return[ymd(n),ymd(n)];
@@ -251,16 +244,64 @@ function range(){
   return[$('d1').value||ymd(n),$('d2').value||ymd(n)]}
 $('flt').onclick=e=>{const b=e.target.closest('button');if(!b)return;per=b.dataset.p;dash(true)};
 $('d1').onchange=$('d2').onchange=()=>{per='custom';dash(true)};
-function bars(title,a,b,t){
-  const m=Math.max(4,t),H=170,W=520,bw=70,xs=[90,250,410];
-  const v=[a,b,t],lb=['Rota expedida','Atribuído','Total geral'],cl=['#f4a28f','#ee4d2d','#1f2937'];
-  let s=`<svg viewBox="0 0 ${W} 220" role="img" aria-label="${title}">`;
-  for(let i=0;i<=4;i++){const y=10+H-H*i/4;s+=`<line x1="40" x2="${W}" y1="${y}" y2="${y}" stroke="#eee" stroke-dasharray="3 3"/><text x="30" y="${y+4}" font-size="11" fill="#9ca3af" text-anchor="end">${Math.round(m*i/4)}</text>`}
-  v.forEach((x,i)=>{const h=H*x/m;s+=`<rect class="bar" style="animation-delay:${i*90}ms" x="${xs[i]}" y="${10+H-h}" width="${bw}" height="${h}" rx="6" fill="${cl[i]}"/><text x="${xs[i]+bw/2}" y="${10+H-h-6}" font-size="12" font-weight="700" text-anchor="middle">${x}</text><text x="${xs[i]+bw/2}" y="205" font-size="11" fill="#6b7280" text-anchor="middle">${lb[i]}</text>`});
-  return `<div class="card"><div class="ch"><h2>${title}</h2></div><div class="cb">${s}</svg></div></div>`}
+
+// Chart 1: Day of the Week Stacked Bar Chart for Errors and Reasons
+function weeklyStackedChart(L){
+  const days=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+  // Initialize counts per day and reason
+  const dayData=days.map(()=>({total:0}));
+  days.forEach((_,dIdx)=>{
+    R.forEach(r=>{ dayData[dIdx][r.k]=0; });
+  });
+
+  L.forEach(x=>{
+    const dt=new Date(x.date+'T00:00:00');
+    let dIdx=(dt.getDay()+6)%7; // Monday=0 ... Sunday=6
+    dayData[dIdx].total++;
+    if(dayData[dIdx][x.reason]!==undefined){
+      dayData[dIdx][x.reason]++;
+    }
+  });
+
+  const maxVal=Math.max(4, ...dayData.map(d=>d.total));
+  const H=170, W=520, barW=45;
+  const startX=45, stepX=65;
+
+  let s=`<svg viewBox="0 0 ${W} 220" role="img" aria-label="Erros por Dia da Semana">`;
+  for(let i=0;i<=4;i++){
+    const y=10+H-H*i/4;
+    s+=`<line x1="30" x2="${W}" y1="${y}" y2="${y}" stroke="#eee" stroke-dasharray="3 3"/><text x="25" y="${y+4}" font-size="10" fill="#9ca3af" text-anchor="end">${Math.round(maxVal*i/4)}</text>`;
+  }
+
+  dayData.forEach((d,i)=>{
+    const x=startX+(i*stepX);
+    let currentYOffset=0;
+    
+    R.forEach(r=>{
+      const val=d[r.k]||0;
+      if(val>0){
+        const h=(H*val)/maxVal;
+        const yPos=10+H - currentYOffset - h;
+        s+=`<rect class="bar" x="${x}" y="${yPos}" width="${barW}" height="${h}" fill="${r.color}" rx="2"><title>${days[i]} - ${r.n}: ${val}</title></rect>`;
+        currentYOffset+=h;
+      }
+    });
+
+    s+=`<text x="${x+barW/2}" y="205" font-size="11" fill="#6b7280" text-anchor="middle">${days[i]}</text>`;
+    if(d.total>0){
+      s+=`<text x="${x+barW/2}" y="${10+H - (H*d.total/maxVal) - 6}" font-size="11" font-weight="700" text-anchor="middle" fill="#1f2937">${d.total}</text>`;
+    }
+  });
+
+  s+=`</svg>`;
+  return `<div class="card" style="grid-column: span 2;"><div class="ch"><h2>Total de Erros por Dia da Semana (Empilhado por Motivo)</h2></div><div class="cb">${s}</div></div>`;
+}
+
 function donut(re,ex){
   const t=re+ex,p=t?re/t:0,C=2*Math.PI*60;
-  return `<div class="card"><div class="ch"><h2>Distribuição / Reatribuídos vs Rota expedida</h2></div><div class="cb"><svg viewBox="0 0 520 220"><g transform="translate(260,100)"><circle r="60" fill="none" stroke="#f4a28f" stroke-width="28"/><circle class="dn" r="60" fill="none" stroke="#ee4d2d" stroke-width="28" stroke-dasharray="${C*p} ${C}" transform="rotate(-90)"/></g><text x="150" y="205" font-size="12"><tspan fill="#ee4d2d">■</tspan> Reatribuídos: ${(p*100).toFixed(1)}%</text><text x="330" y="205" font-size="12"><tspan fill="#f4a28f">■</tspan> Rota expedida: ${(t?100-p*100:0).toFixed(1)}%</text></svg></div></div>`}
+  return `<div class="card"><div class="ch"><h2>Distribuição / Reatribuídos vs Rota expedida</h2></div><div class="cb"><svg viewBox="0 0 520 220"><g transform="translate(260,100)"><circle r="60" fill="none" stroke="#f4a28f" stroke-width="28"/><circle class="dn" r="60" fill="none" stroke="#ee4d2d" stroke-width="28" stroke-dasharray="${C*p} ${C}" transform="rotate(-90)"/></g><text x="150" y="205" font-size="12"><tspan fill="#ee4d2d">■</tspan> Reatribuídos: ${(p*100).toFixed(1)}%</text><text x="330" y="205" font-size="12"><tspan fill="#f4a28f">■</tspan> Rota expedida: ${(t?100-p*100:0).toFixed(1)}%</text></svg></div></div>`;
+}
+
 function dash(an){
   const[a,b]=range();$('d1').value=a;$('d2').value=b;
   document.querySelectorAll('#flt button').forEach(x=>x.classList.toggle('on',x.dataset.p==per));
@@ -273,10 +314,13 @@ function dash(an){
   $('kpis').className='kpis'+(an?' go':'');$('charts').className='charts'+(an?' go':'');
   $('kpis').innerHTML=K.map((k,i)=>`<div class="k ${k[2]||''}" style="animation-delay:${i*60}ms"><small>${k[0]}</small><b data-n="${k[1]}">${k[1]}${k[3]?'<span> '+k[3]+'</span>':''}</b></div>`).join('');
   if(an)countUp();
-  const g=k=>bars(k[0],c(k[1],'expedida'),c(k[1],'atribuido'),c(k[1]));
-  $('charts').innerHTML=g(['Erro de sorting','sorting'])+g(['Erro de etiquetagem','etiqueta'])+g(['Backlog / Data errada','data'])+donut(re,tot-re);
+  
+  // Render weekly stacked bar chart + donut chart
+  $('charts').innerHTML = weeklyStackedChart(L) + donut(re,tot-re);
 }
+
 function countUp(){document.querySelectorAll('#kpis b[data-n]').forEach(b=>{const end=parseFloat(b.dataset.n),dec=(b.dataset.n.split('.')[1]||'').length,t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/700);b.firstChild.nodeValue=(end*(1-Math.pow(1-p,3))).toFixed(dec);if(p<1)requestAnimationFrame(f)})(t0)})}
+
 /* Init */
 let opn=localStorage.getItem('ss_op')||'';
 if(!opn){opn=(prompt('Seu nome (aparece nos registros):')||'').trim()||'Operador';localStorage.setItem('ss_op',opn)}
